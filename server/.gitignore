@@ -1,0 +1,6 @@
+# Configurações locais e segredos
+.env
+.env.*
+
+# Dependências
+node_modules/
