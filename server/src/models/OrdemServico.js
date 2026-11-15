@@ -34,6 +34,11 @@ export const OrdemServico = sequelize.define(
             ),
             allowNull: false,
             defaultValue: "aberto"
-        }
+        },
+    
+    },
+    {
+        tableName: 'ordens_servico',
+        timestamps: true
     }
 );
