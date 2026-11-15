@@ -2,7 +2,7 @@ import { Router } from "express";
 import { autenticar, autorizar } from "../middlewares/auth.js";
 import { loginUsuario, cadastrarUsuario } from "../controllers/authController.js";
 import { listarProprietarios, criarProprietario, buscarProprietarioPorId, atualizarProprietario, excluirProprietario } from "../controllers/proprietarioController.js";
-import { listarVeiculos, criarVeiculo } from "../controllers/veiculoController.js";
+import { listarVeiculos, criarVeiculo, buscarVeiculoPorId, atualizarVeiculo, excluirVeiculo } from "../controllers/veiculoController.js";
 import { listarOrdensServico, criarOrdemServico, atualizarStatus } from "../controllers/ordemServicoController.js";
 
 
@@ -21,7 +21,10 @@ router.delete("/proprietarios/:id", autenticar, autorizar('admin'), excluirPropr
 
 // Veículos
 router.get("/veiculos", autenticar, autorizar('admin', 'atendente', 'tecnico'), listarVeiculos);
+router.get("/veiculos/:id", autenticar, autorizar('admin', 'atendente'), buscarVeiculoPorId);
 router.post("/veiculos", autenticar, autorizar('admin', 'atendente'), criarVeiculo);
+router.put("/veiculos/:id", autenticar, autorizar('admin', 'atendente'), atualizarVeiculo);
+router.delete("/veiculos/:id", autenticar, autorizar('admin'), excluirVeiculo);
 
 // Ordens de serviço
 router.get("/ordens-servico", autenticar, autorizar('admin', 'atendente', 'tecnico'), listarOrdensServico);
