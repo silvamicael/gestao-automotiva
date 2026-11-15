@@ -177,3 +177,57 @@ export const atualizarProprietario = async (req, res) => {
         });
     }
 };
+
+
+export const excluirProprietario = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validar ID
+        if (
+            !/^[1-9]\d*$/.test(id) ||
+            Number(id) > 2147483647
+        ) {
+            return res.status(400).json({
+                mensagem: "ID do proprietário inválido."
+            });
+        }
+
+        // Buscar proprietário
+        const proprietario = await Proprietario.findByPk(id);
+
+        if (!proprietario) {
+            return res.status(404).json({
+                mensagem: "Proprietário não encontrado."
+            });
+        }
+
+        // Verificar veículos vinculados
+        const quantidadeVeiculos = await proprietario.countVeiculos();
+
+        if (quantidadeVeiculos > 0) {
+            return res.status(409).json({
+                mensagem: "Não é possível excluir um proprietário com veículos vinculados."
+            });
+        }
+
+        // Excluir proprietário
+        await proprietario.destroy();
+
+        return res.status(204).send();
+
+    } catch (erro) {
+        // Proteção adicional contra exclusão com vínculo
+        if (erro.name === "SequelizeForeignKeyConstraintError") {
+            return res.status(409).json({
+                mensagem: "Não é possível excluir um proprietário com registros vinculados."
+            });
+        }
+
+        console.error("Erro ao excluir proprietário:", erro);
+
+        return res.status(500).json({
+            mensagem: "Erro interno ao excluir proprietário."
+        });
+    }
+};
