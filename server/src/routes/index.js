@@ -3,7 +3,7 @@ import { autenticar, autorizar } from "../middlewares/auth.js";
 import { loginUsuario, cadastrarUsuario } from "../controllers/authController.js";
 import { listarProprietarios, criarProprietario, buscarProprietarioPorId, atualizarProprietario, excluirProprietario } from "../controllers/proprietarioController.js";
 import { listarVeiculos, criarVeiculo, buscarVeiculoPorId, atualizarVeiculo, excluirVeiculo } from "../controllers/veiculoController.js";
-import { listarOrdensServico, criarOrdemServico, atualizarStatus } from "../controllers/ordemServicoController.js";
+import { listarOrdensServico, buscarOrdemPorId, criarOrdemServico, atualizarStatus, atualizarOrdemServico, excluirOrdemServico } from "../controllers/ordemServicoController.js";
 
 
 const router = Router();
@@ -28,8 +28,12 @@ router.delete("/veiculos/:id", autenticar, autorizar('admin'), excluirVeiculo);
 
 // Ordens de serviço
 router.get("/ordens-servico", autenticar, autorizar('admin', 'atendente', 'tecnico'), listarOrdensServico);
-router.post("/ordens-servico", autenticar, autorizar('admin', 'atendente', 'tecnico'), criarOrdemServico);
+router.get("/ordens-servico/:id", autenticar, autorizar('admin', 'atendente', 'tecnico'), buscarOrdemPorId);
+router.post("/ordens-servico", autenticar, autorizar('admin', 'atendente'), criarOrdemServico);
+router.put("/ordens-servico/:id", autenticar, autorizar('admin', 'atendente'), atualizarOrdemServico);
+router.delete("/ordens-servico/:id", autenticar, autorizar('admin'), excluirOrdemServico);
 
 router.patch("/ordens-servico/:id/status", autenticar, autorizar('admin', 'atendente', 'tecnico'), atualizarStatus);
+
 
 export default router;

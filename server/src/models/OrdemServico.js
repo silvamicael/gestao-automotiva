@@ -14,7 +14,7 @@ export const OrdemServico = sequelize.define(
             allowNull: false
         },
         tipoServico: {
-            type: DataTypes.ENUM("Manutenção", "Reparo", "Inspeção"),
+            type: DataTypes.STRING(100),
             allowNull: false
         },
         valor: {
