@@ -1,5 +1,10 @@
-# Configurações locais e segredos
+# Variáveis de ambiente
 .env
+.env.*
+!.env.example
+
+# Certificados locais
+server/certs/
 
 # Dependências
 node_modules/
