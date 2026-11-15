@@ -1,4 +1,3 @@
-import { where } from "sequelize";
 import Usuario from "../models/Usuario.js";
 import bcrypt from "bcrypt";
 
