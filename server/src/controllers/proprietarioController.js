@@ -101,3 +101,79 @@ export const buscarProprietarioPorId = async (req, res) => {
         });
     }
 };
+
+
+export const atualizarProprietario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, email, telefone } = req.body ?? {};
+
+        // Validar ID
+        if (
+            !/^[1-9]\d*$/.test(id) ||
+            Number(id) > 2147483647
+        ) {
+            return res.status(400).json({
+                mensagem: 'ID do proprietário inválido.'
+            });
+        }
+
+        // Validar campos obrigatórios
+        if (
+            typeof nome !== 'string' || !nome.trim() ||
+            typeof email !== 'string' ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+            typeof telefone !== 'string' || !telefone.trim()
+        ) {
+            return res.status(400).json({
+                mensagem: 'Informe nome, email e telefone válidos.'
+            });
+        }
+
+        // Buscar proprietário
+        const proprietario = await Proprietario.findByPk(id);
+
+        if (!proprietario) {
+            return res.status(404).json({
+                mensagem: 'Proprietário não encontrado.'
+            });
+        }
+
+        // Atualizar dados permitidos
+        await proprietario.update({
+            nome: nome.trim(),
+            email: email.trim().toLowerCase(),
+            telefone: telefone.trim()
+        });
+
+        // Retornar sem expor CPF
+        return res.status(200).json({
+            mensagem: 'Proprietário atualizado com sucesso!',
+            proprietario: {
+                id: proprietario.id,
+                nome: proprietario.nome,
+                email: proprietario.email,
+                telefone: proprietario.telefone
+            }
+        });
+
+    } catch (erro) {
+        if (erro.name === 'SequelizeUniqueConstraintError') {
+            return res.status(409).json({
+                mensagem: 'Este email já está cadastrado.'
+            });
+        }
+
+        if (erro.name === 'SequelizeValidationError') {
+            return res.status(400).json({
+                mensagem: 'Dados do proprietário inválidos.'
+            });
+        }
+
+        console.error('Erro ao atualizar proprietário:', erro);
+
+        return res.status(500).json({
+            mensagem: 'Erro interno ao atualizar proprietário.'
+        });
+    }
+};
