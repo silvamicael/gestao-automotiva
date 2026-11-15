@@ -2,6 +2,7 @@
 import { Op } from "sequelize";
 import { OrdemServico, Veiculo, Proprietario } from "../models/index.js";
 
+// Status permitidos conforme a documentação SAEP
 const STATUS_VALIDOS = [
   "aberto",
   "em_andamento",
@@ -26,6 +27,7 @@ const incluirRelacionamentos = () => [
   },
 ];
 
+// Regras de validação dos dados de uma ordem de serviço
 const validarDados = (dados) => {
   const { descricao, tipoServico, valor, veiculoId } = dados;
 
@@ -263,6 +265,7 @@ export const atualizarStatus = async (req, res) => {
       });
     }
 
+    // O status é atualizado separadamente dos demais dados da ordem
     await ordem.update({ status });
 
     return res.json({
