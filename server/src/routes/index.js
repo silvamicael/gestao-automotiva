@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { autenticar } from "../middlewares/auth.js";
+import { autenticar, autorizar } from "../middlewares/auth.js";
 import { loginUsuario, cadastrarUsuario } from "../controllers/authController.js";
 import { listarProprietarios, criarProprietario } from "../controllers/proprietarioController.js";
 import { listarVeiculos, criarVeiculo } from "../controllers/veiculoController.js";
@@ -10,20 +10,20 @@ const router = Router();
 
 // Autenticação
 router.post("/auth/login", loginUsuario);
-router.post("/auth/cadastrar", cadastrarUsuario);
+router.post("/auth/cadastrar", autenticar, autorizar('admin'), cadastrarUsuario);
 
 // Proprietários
-router.get("/proprietarios", autenticar, listarProprietarios);
-router.post("/proprietarios", autenticar, criarProprietario);
+router.get("/proprietarios", autenticar, autorizar('admin', 'atendente', 'tecnico'), listarProprietarios);
+router.post("/proprietarios", autenticar, autorizar('admin', 'atendente'), criarProprietario);
 
 // Veículos
-router.get("/veiculos", autenticar, listarVeiculos);
-router.post("/veiculos", autenticar, criarVeiculo);
+router.get("/veiculos", autenticar, autorizar('admin', 'atendente', 'tecnico'), listarVeiculos);
+router.post("/veiculos", autenticar, autorizar('admin', 'atendente'), criarVeiculo);
 
 // Ordens de serviço
-router.get("/ordens-servico", autenticar, listarOrdensServico);
-router.post("/ordens-servico", autenticar, criarOrdemServico);
+router.get("/ordens-servico", autenticar, autorizar('admin', 'atendente', 'tecnico'), listarOrdensServico);
+router.post("/ordens-servico", autenticar, autorizar('admin', 'atendente', 'tecnico'), criarOrdemServico);
 
-router.patch("/ordens-servico/:id/status", autenticar, atualizarStatus);
+router.patch("/ordens-servico/:id/status", autenticar, autorizar('admin', 'atendente', 'tecnico'), atualizarStatus);
 
 export default router;
